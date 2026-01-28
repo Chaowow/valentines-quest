@@ -27,7 +27,7 @@ export default function Reveal() {
     setShowConfetti(true);
 
     if (confettiTimerRef.current) clearTimeout(confettiTimerRef.current);
-    confettiTimerRef.current = setTimeout(() => setShowConfetti(false), 2200);
+    confettiTimerRef.current = setTimeout(() => setShowConfetti(false), 2700);
   };
 
   useEffect(() => {
@@ -91,7 +91,6 @@ export default function Reveal() {
             </span>
           ))}
 
-          <div className="absolute inset-0 bg-white/0 animate-[confettiFade_2.2s_ease-out_forwards]" />
         </div>
       )}
 
@@ -195,17 +194,15 @@ export default function Reveal() {
       <style>
         {`
           @keyframes confettiFall {
-            0%   { transform: translateX(0px) translateY(0px) rotate(0deg); opacity: 1; }
-            100% { transform: translateX(var(--drift)) translateY(115vh) rotate(var(--rot)); opacity: 1; }
-          }
-
-          @keyframes confettiFade {
-            0%   { opacity: 0; }
-            20%  { opacity: 0; }
-            100% { opacity: 1; }
+            0%   { transform: translateX(0px) translateY(-40px) rotate(0deg); opacity: 1; }
+            100% { transform: translateX(var(--drift)) translateY(130vh) rotate(var(--rot)); opacity: 1; }
           }
         `}
       </style>
+
     </div>
   );
 }
+
+
+
