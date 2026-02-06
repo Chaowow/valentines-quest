@@ -38,8 +38,9 @@ export default function Home() {
   );
 
   function markDone(key) {
-    setCompleted(prev => ({ ...prev, [key]: true }));
+    setCompleted(prev => (prev[key] ? prev : { ...prev, [key]: true }));
   }
+
 
   const ActiveGame = GAMES.find(g => g.key === activeKey)?.component ?? Memory;
 
@@ -58,7 +59,9 @@ export default function Home() {
             completedCount={GAMES.filter(g => completed[g.key]).length}
             total={GAMES.length}
             allDone={allDone}
-            onReveal={() => navigate("/reveal")}
+            onReveal={() => {
+              if (allDone) navigate("/reveal");
+            }}
           />
         </div>
 

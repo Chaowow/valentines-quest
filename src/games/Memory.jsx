@@ -2,10 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 
 const CARD_BACK = "❓";
 
-// Phrase-completion pairs:
-// Each pair becomes TWO different cards that match by `pairKey`:
-// - left = prompt/start of phrase
-// - right = finish of phrase
 const PAIRS = [
   { key: "a", left: "Baluk in the...", right: "pani🐻🌊" },
   { key: "b", left: "Full, satisfied…", right: "babby😋" },
@@ -25,7 +21,6 @@ function shuffle(arr) {
 }
 
 function buildDeck(pairs) {
-  // Build two DIFFERENT cards per pair
   const cards = pairs.flatMap((p) => [
     {
       pairKey: p.key,
@@ -41,7 +36,6 @@ function buildDeck(pairs) {
     },
   ]);
 
-  // Give each card a unique instance id, then shuffle
   return shuffle(
     cards.map((c, idx) => ({
       ...c,
@@ -53,7 +47,7 @@ function buildDeck(pairs) {
   );
 }
 
-export default function Memory() {
+export default function Memory({ onComplete, isComplete }) {
   const pairs = useMemo(() => PAIRS, []);
 
   const [deck, setDeck] = useState(() => buildDeck(pairs));
@@ -108,11 +102,17 @@ export default function Memory() {
     }
   }
 
-  // Handy while editing content; keeps things consistent on mount
   useEffect(() => {
     resetGame();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // ✅ Mark completion once when all pairs are matched
+  useEffect(() => {
+    if (!allMatched) return;
+    if (isComplete) return; // already counted in Home/localStorage
+    onComplete?.();
+  }, [allMatched, isComplete, onComplete]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-rose-100 via-pink-100 to-rose-200 px-4 py-10">
@@ -144,7 +144,6 @@ export default function Memory() {
             Flip two cards. Match the phrase starter with its ending.
           </p>
 
-          {/* Grid (phrases need more space than emojis) */}
           <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
             {deck.map((card) => {
               const faceUp = isFaceUp(card);
@@ -162,7 +161,6 @@ export default function Memory() {
                   ].join(" ")}
                   aria-label={faceUp ? `Card: ${card.label}` : "Hidden card"}
                 >
-                  {/* Optional small tag so it feels like "start/finish" */}
                   {faceUp && (
                     <div className="absolute left-2 top-2 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 ring-1 ring-black/5">
                       {card.side === "left" ? "START" : "FINISH"}
